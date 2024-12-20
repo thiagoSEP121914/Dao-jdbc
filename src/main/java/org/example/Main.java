@@ -7,6 +7,7 @@ import model.entities.Department;
 import model.entities.Seller;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -29,5 +30,10 @@ public class Main {
         for (Seller obj : list) {
             System.out.println(obj);
         }
+
+        System.out.println("=== TEST 4: seller INSERT ===");
+        Seller newSeller = new Seller(null, "Greg", "gregMaluico@Gmail.com", new Date(), 4000.0, new Department(2, null));
+        sellerDao.insert(newSeller);
+        System.out.println("INSERTED! New id = " + newSeller.getId());
     }
 }

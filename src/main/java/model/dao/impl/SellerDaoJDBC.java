@@ -25,7 +25,35 @@ private static final String MSG = "NAO FOI POSSIVEL CONECTAR COM O BANCO DE DADO
 
     @Override
     public void insert(Seller obj) {
+        PreparedStatement st = null;
+        String sql = "INSERT INTO seller "
+                     + "(Name, Email, Birthdate, BaseSalary, DepartmentId) "
+                     + "VALUES ( ?, ?, ?, ?, ? )";
+        try {
+            st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st.setString(1,obj.getName());
+            st.setString(2, obj.getEmail());
+            st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
+            st.setDouble(4,obj.getBaseSalary());
+            st.setInt(5, obj.getDepartment().getId());
+            int rowsAffected = st.executeUpdate();
 
+            if (rowsAffected > 0) {
+                ResultSet rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    obj.setId(id);
+                }
+                System.out.println("DADOS CADASTRADOS COM SUCESSO!");
+                DB.closeResultSet(rs);
+            } else {
+                throw new RuntimeException("ERRO INESPERADO ! NENHUMA LINHA AFETADA! ");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(MSG + e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
